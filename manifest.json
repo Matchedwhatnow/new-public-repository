@@ -1,0 +1,9 @@
+{
+  "name": "Matched: What Now?",
+  "short_name": "Matched",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0e0f18",
+  "theme_color": "#10111b",
+  "description": "Dating message ideas, conversation starters, follow-ups and a quick message builder."
+}
