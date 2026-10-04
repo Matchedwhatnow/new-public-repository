@@ -55,7 +55,7 @@ const DATA = {
     "You're actually fun to talk to. Fancy continuing this conversation over a coffee sometime?",
     "I think we've established that the banter works. Want to test the theory in person?",
     "This conversation deserves better than a dating app. Fancy a drink sometime?",
-    "We seem to be getting on, so I'll be brave: want to meet for a coffee/drink and see if the chemistry survives outside the app?",
+    "We seem to be getting on, so I'll be brave: want to meet for a coffee or drink and see if the chemistry survives outside the app?",
     "How about we stop typing and see whether we're just as good at talking in person?",
     "I'd rather meet for an hour than spend three weeks messaging. Fancy a coffee?"
   ],
@@ -89,10 +89,7 @@ const labels = {
 };
 
 let current = "funny";
-
-let favorites = JSON.parse(
-  localStorage.getItem("mwn_favs") || "[]"
-);
+let favorites = JSON.parse(localStorage.getItem("mwn_favs") || "[]");
 
 function esc(text) {
   return String(text)
@@ -108,11 +105,13 @@ function renderCats() {
   if (!cats) return;
 
   cats.innerHTML = Object.keys(DATA)
-    .map(
-      key =>
-        `<button class="chip ${key === current ? "on" : ""}"
-          onclick="pick('${key}')">${labels[key]}</button>`
-    )
+    .map(key => `
+      <button
+        class="chip ${key === current ? "on" : ""}"
+        onclick="pick('${key}')">
+        ${labels[key]}
+      </button>
+    `)
     .join("");
 }
 
@@ -132,32 +131,31 @@ function render(list = DATA[current]) {
   const cards = document.querySelector("#cards");
   if (!cards) return;
 
-  if (!list || list.length === 0) {
+  if (!list.length) {
     cards.innerHTML = `<p class="muted">No messages found.</p>`;
     return;
   }
 
-  cards.innerHTML = list
-    .map(message => {
-      const saved = favorites.includes(message);
+  cards.innerHTML = list.map(message => {
+    const saved = favorites.includes(message);
 
-      return `
-        <article class="card">
-          <p>${esc(message)}</p>
-          <div>
-            <button onclick='copyMsg(${JSON.stringify(message)})'>
-              Copy
-            </button>
+    return `
+      <article class="card">
+        <p>${esc(message)}</p>
+        <div>
+          <button onclick='copyMsg(${JSON.stringify(message)})'>
+            Copy
+          </button>
 
-            <button class="ghost"
-              onclick='fav(${JSON.stringify(message)})'>
-              ${saved ? "★ Saved" : "☆ Save"}
-            </button>
-          </div>
-        </article>
-      `;
-    })
-    .join("");
+          <button
+            class="ghost"
+            onclick='fav(${JSON.stringify(message)})'>
+            ${saved ? "★ Saved" : "☆ Save"}
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
 }
 
 async function copyMsg(message) {
@@ -171,6 +169,7 @@ async function copyMsg(message) {
     area.select();
     document.execCommand("copy");
     area.remove();
+
     toast("Saved to clipboard");
   }
 }
@@ -183,7 +182,7 @@ function fav(message) {
   }
 
   localStorage.setItem("mwn_favs", JSON.stringify(favorites));
-  render();
+  render(DATA[current]);
 }
 
 function showFavs() {
@@ -193,42 +192,42 @@ function showFavs() {
   if (title) title.textContent = "Saved Messages";
   if (!cards) return;
 
-  if (favorites.length === 0) {
+  if (!favorites.length) {
     cards.innerHTML = `
       <p class="muted">
-        Tap ★ Save on any message to keep it here.
+        Tap ☆ Save on any message to keep it here.
       </p>
     `;
     return;
   }
 
-  cards.innerHTML = favorites
-    .map(
-      message => `
-        <article class="card">
-          <p>${esc(message)}</p>
+  cards.innerHTML = favorites.map(message => `
+    <article class="card">
+      <p>${esc(message)}</p>
+      <div>
+        <button onclick='copyMsg(${JSON.stringify(message)})'>
+          Copy
+        </button>
 
-          <div>
-            <button onclick='copyMsg(${JSON.stringify(message)})'>
-              Copy
-            </button>
+        <button
+          class="ghost"
+          onclick='removeFav(${JSON.stringify(message)})'>
+          ★ Remove
+        </button>
+      </div>
+    </article>
+  `).join("");
+}
 
-            <button class="ghost"
-              onclick='fav(${JSON.stringify(message)}); showFavs();'>
-              ★ Remove
-            </button>
-          </div>
-        </article>
-      `
-    )
-    .join("");
+function removeFav(message) {
+  favorites = favorites.filter(item => item !== message);
+  localStorage.setItem("mwn_favs", JSON.stringify(favorites));
+  showFavs();
 }
 
 function randomMsg() {
   const all = Object.values(DATA).flat();
-
-  const message =
-    all[Math.floor(Math.random() * all.length)];
+  const message = all[Math.floor(Math.random() * all.length)];
 
   const title = document.querySelector("#title");
   const cards = document.querySelector("#cards");
@@ -239,13 +238,13 @@ function randomMsg() {
   cards.innerHTML = `
     <article class="card featured">
       <p>${esc(message)}</p>
-
       <div>
         <button onclick='copyMsg(${JSON.stringify(message)})'>
           Copy
         </button>
 
-        <button class="ghost"
+        <button
+          class="ghost"
           onclick='fav(${JSON.stringify(message)})'>
           ☆ Save
         </button>
@@ -260,6 +259,7 @@ function searchMsgs(query) {
   if (!q) {
     const title = document.querySelector("#title");
     if (title) title.textContent = labels[current];
+
     render(DATA[current]);
     return;
   }
@@ -276,58 +276,127 @@ function searchMsgs(query) {
   render(results);
 }
 
+/* -----------------------------------------
+   UPGRADED 20-SECOND MESSAGE BUILDER
+----------------------------------------- */
+
 function buildMessage() {
   const detailBox = document.querySelector("#detail");
   const reactionBox = document.querySelector("#reaction");
   const output = document.querySelector("#builtMessage");
 
-  if (!detailBox || !reactionBox || !output) {
-    return;
-  }
+  if (!detailBox || !reactionBox || !output) return;
 
-  const detail = detailBox.value.trim();
-  const reaction = reactionBox.value.trim();
+  let detail = detailBox.value.trim();
+  let reaction = reactionBox.value.trim();
 
   if (!detail && !reaction) {
     output.innerHTML = `
       <p class="muted">
-        Add a detail and your reaction first.
+        Add something you noticed and your reaction first.
       </p>
     `;
     return;
   }
 
-  let message = "";
-
-  if (detail && reaction) {
-    message = `${detail} — ${reaction}`;
-  } else if (detail) {
-    message = `${detail} — tell me more 👀`;
-  } else {
-    message = reaction;
+  if (!detail) {
+    detail = "Something on your profile caught my attention";
   }
 
+  if (!reaction) {
+    reaction = "I need to know the story";
+  }
+
+  detail = cleanSentence(detail);
+  reaction = cleanSentence(reaction);
+
+  const playful = `${detail} 😂 ${reaction} — I feel like there's definitely a story behind this.`;
+
+  const flirty = `${detail}... okay, you've got my attention 👀 ${reaction}. Are you always this good at making people curious?`;
+
+  const confident = `${detail}. ${reaction}. I'm skipping the boring small talk — tell me the story behind it.`;
+
+  const casual = `${detail} — ${reaction}. What's the story there?`;
+
+  const messages = [
+    {
+      style: "😄 Playful",
+      message: playful
+    },
+    {
+      style: "😉 Flirty",
+      message: flirty
+    },
+    {
+      style: "🔥 Confident",
+      message: confident
+    },
+    {
+      style: "🙂 Casual",
+      message: casual
+    }
+  ];
+
   output.innerHTML = `
-    <article class="card featured">
-      <p>${esc(message)}</p>
+    <div style="margin-top:16px;">
+      <h3>Your Messages</h3>
+      <p class="muted">
+        Pick the one that sounds most like you.
+      </p>
 
-      <div>
-        <button onclick='copyMsg(${JSON.stringify(message)})'>
-          Copy
-        </button>
+      ${messages.map(item => `
+        <article class="card featured">
+          <strong>${item.style}</strong>
 
-        <button class="ghost"
-          onclick='fav(${JSON.stringify(message)})'>
-          ☆ Save
-        </button>
-      </div>
-    </article>
+          <p>${esc(item.message)}</p>
+
+          <div>
+            <button
+              onclick='copyMsg(${JSON.stringify(item.message)})'>
+              Copy
+            </button>
+
+            <button
+              class="ghost"
+              onclick='saveBuiltMessage(${JSON.stringify(item.message)}, this)'>
+              ☆ Save
+            </button>
+          </div>
+        </article>
+      `).join("")}
+    </div>
   `;
+}
+
+function cleanSentence(text) {
+  let cleaned = String(text).trim();
+
+  cleaned = cleaned.replace(/[.!?]+$/, "");
+
+  if (!cleaned) return "";
+
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+}
+
+function saveBuiltMessage(message, button) {
+  if (!favorites.includes(message)) {
+    favorites.push(message);
+
+    localStorage.setItem(
+      "mwn_favs",
+      JSON.stringify(favorites)
+    );
+
+    button.textContent = "★ Saved";
+    toast("Message saved");
+  } else {
+    button.textContent = "★ Saved";
+    toast("Already saved");
+  }
 }
 
 function toast(text) {
   const toastBox = document.querySelector("#toast");
-
   if (!toastBox) return;
 
   toastBox.textContent = text;
@@ -337,6 +406,8 @@ function toast(text) {
     toastBox.classList.remove("show");
   }, 1400);
 }
+
+/* START APP */
 
 renderCats();
 
