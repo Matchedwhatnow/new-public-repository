@@ -89,9 +89,10 @@ const labels = {
 };
 
 let current = "funny";
-let favorites = JSON.parse(
-  localStorage.getItem("mwn_favs") || "[]"
-);
+
+let favorites =
+  JSON.parse(localStorage.getItem("mwn_favs") || "[]");
+
 
 function esc(text) {
   return String(text)
@@ -101,6 +102,7 @@ function esc(text) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+
 
 function renderCats() {
   const cats = document.querySelector("#cats");
@@ -118,6 +120,7 @@ function renderCats() {
     .join("");
 }
 
+
 function pick(key) {
   if (!DATA[key]) return;
 
@@ -133,17 +136,15 @@ function pick(key) {
   render(DATA[key]);
 }
 
+
 function render(list = DATA[current]) {
   const cards = document.querySelector("#cards");
 
   if (!cards) return;
 
   if (!list.length) {
-    cards.innerHTML = `
-      <p class="muted">
-        No messages found.
-      </p>
-    `;
+    cards.innerHTML =
+      `<p class="muted">No messages found.</p>`;
     return;
   }
 
@@ -152,7 +153,6 @@ function render(list = DATA[current]) {
 
     return `
       <article class="card">
-
         <p>${esc(message)}</p>
 
         <div>
@@ -167,16 +167,15 @@ function render(list = DATA[current]) {
             ${saved ? "★ Saved" : "☆ Save"}
           </button>
         </div>
-
       </article>
     `;
   }).join("");
 }
 
+
 async function copyMsg(message) {
   try {
     await navigator.clipboard.writeText(message);
-
     toast("Saved to clipboard");
   } catch (error) {
     const area =
@@ -196,6 +195,7 @@ async function copyMsg(message) {
   }
 }
 
+
 function fav(message) {
   if (favorites.includes(message)) {
     favorites =
@@ -211,6 +211,7 @@ function fav(message) {
 
   render(DATA[current]);
 }
+
 
 function showFavs() {
   const title =
@@ -234,27 +235,27 @@ function showFavs() {
     return;
   }
 
-  cards.innerHTML = favorites.map(message => `
-    <article class="card">
+  cards.innerHTML =
+    favorites.map(message => `
+      <article class="card">
+        <p>${esc(message)}</p>
 
-      <p>${esc(message)}</p>
+        <div>
+          <button
+            onclick='copyMsg(${JSON.stringify(message)})'>
+            Copy
+          </button>
 
-      <div>
-        <button
-          onclick='copyMsg(${JSON.stringify(message)})'>
-          Copy
-        </button>
-
-        <button
-          class="ghost"
-          onclick='removeFav(${JSON.stringify(message)})'>
-          ★ Remove
-        </button>
-      </div>
-
-    </article>
-  `).join("");
+          <button
+            class="ghost"
+            onclick='removeFav(${JSON.stringify(message)})'>
+            ★ Remove
+          </button>
+        </div>
+      </article>
+    `).join("");
 }
+
 
 function removeFav(message) {
   favorites =
@@ -267,6 +268,7 @@ function removeFav(message) {
 
   showFavs();
 }
+
 
 function randomMsg() {
   const all =
@@ -289,7 +291,6 @@ function randomMsg() {
 
   cards.innerHTML = `
     <article class="card featured">
-
       <p>${esc(message)}</p>
 
       <div>
@@ -304,16 +305,14 @@ function randomMsg() {
           ☆ Save
         </button>
       </div>
-
     </article>
   `;
 }
 
+
 function searchMsgs(query) {
   const q =
-    String(query || "")
-      .trim()
-      .toLowerCase();
+    String(query || "").trim().toLowerCase();
 
   if (!q) {
     const title =
@@ -345,6 +344,7 @@ function searchMsgs(query) {
 
   render(results);
 }
+
 
 /* -----------------------------------------
    20-SECOND MESSAGE BUILDER
@@ -389,8 +389,11 @@ function buildMessage() {
       "I need to know the story";
   }
 
-  detail = cleanSentence(detail);
-  reaction = cleanSentence(reaction);
+  detail =
+    cleanSentence(detail);
+
+  reaction =
+    cleanSentence(reaction);
 
   const playful =
     `${detail} 😂 ${reaction} — I feel like there's definitely a story behind this.`;
@@ -425,7 +428,6 @@ function buildMessage() {
 
   output.innerHTML = `
     <div style="margin-top:16px;">
-
       <h3>Your Messages</h3>
 
       <p class="muted">
@@ -463,6 +465,7 @@ function buildMessage() {
   `;
 }
 
+
 function cleanSentence(text) {
   let cleaned =
     String(text).trim();
@@ -470,13 +473,16 @@ function cleanSentence(text) {
   cleaned =
     cleaned.replace(/[.!?]+$/, "");
 
-  if (!cleaned) return "";
+  if (!cleaned) {
+    return "";
+  }
 
   return (
     cleaned.charAt(0).toUpperCase() +
     cleaned.slice(1)
   );
 }
+
 
 function saveBuiltMessage(message, button) {
   if (!favorites.includes(message)) {
@@ -487,15 +493,18 @@ function saveBuiltMessage(message, button) {
       JSON.stringify(favorites)
     );
 
-    button.textContent = "★ Saved";
+    button.textContent =
+      "★ Saved";
 
     toast("Message saved");
   } else {
-    button.textContent = "★ Saved";
+    button.textContent =
+      "★ Saved";
 
     toast("Already saved");
   }
 }
+
 
 function toast(text) {
   const toastBox =
@@ -512,16 +521,50 @@ function toast(text) {
   }, 1400);
 }
 
-/* =========================================
-   INSTALL MATCHED WHAT NOW
-========================================= */
+
+/* -----------------------------------------
+   APP INSTALL
+----------------------------------------- */
 
 let deferredInstallPrompt = null;
+
+
+function isAppInstalled() {
+  return (
+    window.matchMedia(
+      "(display-mode: standalone)"
+    ).matches ||
+    window.navigator.standalone === true
+  );
+}
+
+
+function getInstallButton() {
+  return document.querySelector("#installApp");
+}
+
+
+function hideInstallButton() {
+  const button = getInstallButton();
+
+  if (button) {
+    button.style.display = "none";
+  }
+}
+
+
+function showInstallButton() {
+  const button = getInstallButton();
+
+  if (button && !isAppInstalled()) {
+    button.style.display = "inline-block";
+  }
+}
+
 
 window.addEventListener(
   "beforeinstallprompt",
   event => {
-
     event.preventDefault();
 
     deferredInstallPrompt = event;
@@ -530,25 +573,40 @@ window.addEventListener(
   }
 );
 
-function showInstallButton() {
-  const installButton =
-    document.querySelector("#installApp");
-
-  if (installButton) {
-    installButton.style.display = "inline-block";
-  }
-}
 
 async function installApp() {
+
+  if (isAppInstalled()) {
+    hideInstallButton();
+
+    toast("Matched What Now is already installed");
+
+    return;
+  }
+
+
+  /*
+    CHROME / CHROMIUM DIRECT INSTALL
+  */
+
   if (deferredInstallPrompt) {
 
-    deferredInstallPrompt.prompt();
-
     try {
-      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt.prompt();
+
+      const choice =
+        await deferredInstallPrompt.userChoice;
+
+      if (
+        choice &&
+        choice.outcome === "accepted"
+      ) {
+        hideInstallButton();
+      }
+
     } catch (error) {
       console.log(
-        "Install prompt closed",
+        "Install prompt error:",
         error
       );
     }
@@ -558,14 +616,31 @@ async function installApp() {
     return;
   }
 
+
+  const ua =
+    navigator.userAgent.toLowerCase();
+
   const isIOS =
-    /iphone|ipad|ipod/i.test(
-      navigator.userAgent
-    );
+    /iphone|ipad|ipod/.test(ua);
+
+  const isSamsung =
+    ua.includes("samsungbrowser");
+
+  const isAndroid =
+    ua.includes("android");
+
+  const isChrome =
+    ua.includes("chrome") &&
+    !isSamsung;
+
+
+  /*
+    IPHONE / IPAD
+  */
 
   if (isIOS) {
     alert(
-      "To install Matched What Now on iPhone:\n\n" +
+      "Install Matched What Now:\n\n" +
       "1. Open this page in Safari.\n" +
       "2. Tap the Share button.\n" +
       "3. Tap Add to Home Screen.\n" +
@@ -575,23 +650,51 @@ async function installApp() {
     return;
   }
 
+
+  /*
+    SAMSUNG INTERNET
+  */
+
+  if (isSamsung) {
+    alert(
+      "For the safest Android installation, open Matched What Now in Google Chrome.\n\n" +
+      "Then open Chrome's menu and choose Install app."
+    );
+
+    return;
+  }
+
+
+  /*
+    GOOGLE CHROME ON ANDROID
+  */
+
+  if (isAndroid && isChrome) {
+    alert(
+      "Chrome is ready to install Matched What Now.\n\n" +
+      "Tap the three-dot Chrome menu, then choose Install app."
+    );
+
+    return;
+  }
+
+
+  /*
+    OTHER BROWSERS
+  */
+
   alert(
-    "If the install window does not appear, open your browser menu and choose Install app or Add to Home screen."
+    "To install Matched What Now, open your browser menu and choose Install app or Add to Home screen."
   );
 }
+
 
 window.addEventListener(
   "appinstalled",
   () => {
-
     deferredInstallPrompt = null;
 
-    const installButton =
-      document.querySelector("#installApp");
-
-    if (installButton) {
-      installButton.style.display = "none";
-    }
+    hideInstallButton();
 
     toast(
       "Matched What Now installed!"
@@ -599,15 +702,15 @@ window.addEventListener(
   }
 );
 
-/* -----------------------------
+
+/* -----------------------------------------
    SERVICE WORKER
------------------------------ */
+----------------------------------------- */
 
 if ("serviceWorker" in navigator) {
   window.addEventListener(
     "load",
     () => {
-
       navigator.serviceWorker
         .register("./sw.js")
         .catch(error => {
@@ -616,14 +719,14 @@ if ("serviceWorker" in navigator) {
             error
           );
         });
-
     }
   );
 }
 
-/* -----------------------------
+
+/* -----------------------------------------
    START APP
------------------------------ */
+----------------------------------------- */
 
 renderCats();
 
@@ -636,3 +739,10 @@ if (initialTitle) {
 }
 
 render(DATA[current]);
+
+
+if (isAppInstalled()) {
+  hideInstallButton();
+} else {
+  showInstallButton();
+}
