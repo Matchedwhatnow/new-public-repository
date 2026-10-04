@@ -1,8 +1,129 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#10111b"><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="style.css"><title>Matched: What Now?</title></head>
-<body><header><div class="brand"><span>MATCHED:</span> WHAT NOW?</div><p>Your dating message playbook</p></header>
-<main><section class="hero"><h1>Stop sending boring “hey” messages.</h1><p>Pick a situation, find a message, make it your own.</p><div class="actions"><button onclick="randomMsg()">🎲 Give me a message</button><button class="ghost" onclick="showFavs()">★ Saved</button></div></section>
-<input id="search" class="search" placeholder="Search messages…" oninput="searchMsgs(this.value)">
-<div id="cats" class="chips"></div><h2 id="title"></h2><section id="cards"></section>
-<section class="builder"><h2>20-Second Message Builder</h2><p>Notice something → add personality → make replying easy.</p><input id="detail" placeholder="Specific detail (e.g. your hiking photo)"><input id="reaction" placeholder="Your reaction"><input id="question" placeholder="Easy question"><button onclick="build()">Build my message</button><div id="built" class="built">Your message will appear here.</div></section>
-<section class="rules"><h2>Golden Rules</h2><p>Be specific. Be curious. Give something back. Don't over-message. Respect boundaries. Be yourself.</p></section></main>
-<nav><button onclick="pick('funny')">Messages</button><button onclick="randomMsg()">Random</button><button onclick="showFavs()">Saved</button></nav><div id="toast"></div><script src="app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#10111b">
+
+  <title>Matched: What Now?</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header>
+    <div class="brand">
+      <span>MATCHED:</span> WHAT NOW?
+    </div>
+
+    <p>Your dating message playbook</p>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <h1>Stop sending boring "hey" messages.</h1>
+
+      <p>
+        Pick a situation, find a message, make it your own.
+      </p>
+
+      <div class="actions">
+        <button onclick="randomMsg()">
+          💬 Give me a message
+        </button>
+
+        <button class="ghost" onclick="showFavs()">
+          ❤️ Saved
+        </button>
+      </div>
+    </section>
+
+
+    <input
+      id="search"
+      class="search"
+      placeholder="Search messages..."
+      oninput="searchMsgs(this.value)"
+    >
+
+
+    <div id="cats" class="chips"></div>
+
+
+    <h2 id="title"></h2>
+
+    <section id="cards"></section>
+
+
+    <section class="builder">
+
+      <h2>20-Second Message Builder</h2>
+
+      <p>
+        Notice something + add personality + make replying easy.
+      </p>
+
+      <input
+        id="detail"
+        placeholder="Specific detail (e.g. your hiking photo)"
+      >
+
+      <input
+        id="reaction"
+        placeholder="Your reaction"
+      >
+
+      <button onclick="buildMessage()">
+        Build my message
+      </button>
+
+      <div id="builtMessage"></div>
+
+    </section>
+
+
+    <section class="rules">
+
+      <h2>Golden Rules</h2>
+
+      <p>
+        Be specific. Be curious. Give something back.
+        Don't over-message. Respect boundaries. Be yourself.
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <nav>
+    <button onclick="pick('funny')">
+      Messages
+    </button>
+
+    <button onclick="randomMsg()">
+      Random
+    </button>
+
+    <button onclick="showFavs()">
+      Saved
+    </button>
+  </nav>
+
+
+  <div id="toast"></div>
+
+
+  <script src="app.js"></script>
+
+</body>
+</html>
