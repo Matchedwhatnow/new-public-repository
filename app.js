@@ -89,7 +89,9 @@ const labels = {
 };
 
 let current = "funny";
-let favorites = JSON.parse(localStorage.getItem("mwn_favs") || "[]");
+let favorites = JSON.parse(
+  localStorage.getItem("mwn_favs") || "[]"
+);
 
 function esc(text) {
   return String(text)
@@ -102,6 +104,7 @@ function esc(text) {
 
 function renderCats() {
   const cats = document.querySelector("#cats");
+
   if (!cats) return;
 
   cats.innerHTML = Object.keys(DATA)
@@ -121,7 +124,10 @@ function pick(key) {
   current = key;
 
   const title = document.querySelector("#title");
-  if (title) title.textContent = labels[key];
+
+  if (title) {
+    title.textContent = labels[key];
+  }
 
   renderCats();
   render(DATA[key]);
@@ -129,10 +135,15 @@ function pick(key) {
 
 function render(list = DATA[current]) {
   const cards = document.querySelector("#cards");
+
   if (!cards) return;
 
   if (!list.length) {
-    cards.innerHTML = `<p class="muted">No messages found.</p>`;
+    cards.innerHTML = `
+      <p class="muted">
+        No messages found.
+      </p>
+    `;
     return;
   }
 
@@ -141,9 +152,12 @@ function render(list = DATA[current]) {
 
     return `
       <article class="card">
+
         <p>${esc(message)}</p>
+
         <div>
-          <button onclick='copyMsg(${JSON.stringify(message)})'>
+          <button
+            onclick='copyMsg(${JSON.stringify(message)})'>
             Copy
           </button>
 
@@ -153,6 +167,7 @@ function render(list = DATA[current]) {
             ${saved ? "★ Saved" : "☆ Save"}
           </button>
         </div>
+
       </article>
     `;
   }).join("");
@@ -161,13 +176,20 @@ function render(list = DATA[current]) {
 async function copyMsg(message) {
   try {
     await navigator.clipboard.writeText(message);
+
     toast("Saved to clipboard");
   } catch (error) {
-    const area = document.createElement("textarea");
+    const area =
+      document.createElement("textarea");
+
     area.value = message;
+
     document.body.appendChild(area);
+
     area.select();
+
     document.execCommand("copy");
+
     area.remove();
 
     toast("Saved to clipboard");
@@ -176,20 +198,31 @@ async function copyMsg(message) {
 
 function fav(message) {
   if (favorites.includes(message)) {
-    favorites = favorites.filter(item => item !== message);
+    favorites =
+      favorites.filter(item => item !== message);
   } else {
     favorites.push(message);
   }
 
-  localStorage.setItem("mwn_favs", JSON.stringify(favorites));
+  localStorage.setItem(
+    "mwn_favs",
+    JSON.stringify(favorites)
+  );
+
   render(DATA[current]);
 }
 
 function showFavs() {
-  const title = document.querySelector("#title");
-  const cards = document.querySelector("#cards");
+  const title =
+    document.querySelector("#title");
 
-  if (title) title.textContent = "Saved Messages";
+  const cards =
+    document.querySelector("#cards");
+
+  if (title) {
+    title.textContent = "Saved Messages";
+  }
+
   if (!cards) return;
 
   if (!favorites.length) {
@@ -203,9 +236,12 @@ function showFavs() {
 
   cards.innerHTML = favorites.map(message => `
     <article class="card">
+
       <p>${esc(message)}</p>
+
       <div>
-        <button onclick='copyMsg(${JSON.stringify(message)})'>
+        <button
+          onclick='copyMsg(${JSON.stringify(message)})'>
           Copy
         </button>
 
@@ -215,31 +251,50 @@ function showFavs() {
           ★ Remove
         </button>
       </div>
+
     </article>
   `).join("");
 }
 
 function removeFav(message) {
-  favorites = favorites.filter(item => item !== message);
-  localStorage.setItem("mwn_favs", JSON.stringify(favorites));
+  favorites =
+    favorites.filter(item => item !== message);
+
+  localStorage.setItem(
+    "mwn_favs",
+    JSON.stringify(favorites)
+  );
+
   showFavs();
 }
 
 function randomMsg() {
-  const all = Object.values(DATA).flat();
-  const message = all[Math.floor(Math.random() * all.length)];
+  const all =
+    Object.values(DATA).flat();
 
-  const title = document.querySelector("#title");
-  const cards = document.querySelector("#cards");
+  const message =
+    all[Math.floor(Math.random() * all.length)];
 
-  if (title) title.textContent = "Try This";
+  const title =
+    document.querySelector("#title");
+
+  const cards =
+    document.querySelector("#cards");
+
+  if (title) {
+    title.textContent = "Try This";
+  }
+
   if (!cards) return;
 
   cards.innerHTML = `
     <article class="card featured">
+
       <p>${esc(message)}</p>
+
       <div>
-        <button onclick='copyMsg(${JSON.stringify(message)})'>
+        <button
+          onclick='copyMsg(${JSON.stringify(message)})'>
           Copy
         </button>
 
@@ -249,46 +304,71 @@ function randomMsg() {
           ☆ Save
         </button>
       </div>
+
     </article>
   `;
 }
 
 function searchMsgs(query) {
-  const q = String(query || "").trim().toLowerCase();
+  const q =
+    String(query || "")
+      .trim()
+      .toLowerCase();
 
   if (!q) {
-    const title = document.querySelector("#title");
-    if (title) title.textContent = labels[current];
+    const title =
+      document.querySelector("#title");
+
+    if (title) {
+      title.textContent = labels[current];
+    }
 
     render(DATA[current]);
+
     return;
   }
 
-  const all = Object.values(DATA).flat();
+  const all =
+    Object.values(DATA).flat();
 
-  const results = all.filter(message =>
-    message.toLowerCase().includes(q)
-  );
+  const results =
+    all.filter(message =>
+      message.toLowerCase().includes(q)
+    );
 
-  const title = document.querySelector("#title");
-  if (title) title.textContent = "Search Results";
+  const title =
+    document.querySelector("#title");
+
+  if (title) {
+    title.textContent = "Search Results";
+  }
 
   render(results);
 }
 
 /* -----------------------------------------
-   UPGRADED 20-SECOND MESSAGE BUILDER
+   20-SECOND MESSAGE BUILDER
 ----------------------------------------- */
 
 function buildMessage() {
-  const detailBox = document.querySelector("#detail");
-  const reactionBox = document.querySelector("#reaction");
-  const output = document.querySelector("#builtMessage");
+  const detailBox =
+    document.querySelector("#detail");
 
-  if (!detailBox || !reactionBox || !output) return;
+  const reactionBox =
+    document.querySelector("#reaction");
 
-  let detail = detailBox.value.trim();
-  let reaction = reactionBox.value.trim();
+  const output =
+    document.querySelector("#builtMessage");
+
+  if (!detailBox || !reactionBox || !output) {
+    return;
+  }
+
+  let detail =
+    detailBox.value.trim();
+
+  let reaction =
+    reactionBox.value.trim();
 
   if (!detail && !reaction) {
     output.innerHTML = `
@@ -300,23 +380,29 @@ function buildMessage() {
   }
 
   if (!detail) {
-    detail = "Something on your profile caught my attention";
+    detail =
+      "Something on your profile caught my attention";
   }
 
   if (!reaction) {
-    reaction = "I need to know the story";
+    reaction =
+      "I need to know the story";
   }
 
   detail = cleanSentence(detail);
   reaction = cleanSentence(reaction);
 
-  const playful = `${detail} 😂 ${reaction} — I feel like there's definitely a story behind this.`;
+  const playful =
+    `${detail} 😂 ${reaction} — I feel like there's definitely a story behind this.`;
 
-  const flirty = `${detail}... okay, you've got my attention 👀 ${reaction}. Are you always this good at making people curious?`;
+  const flirty =
+    `${detail}... okay, you've got my attention 👀 ${reaction}. Are you always this good at making people curious?`;
 
-  const confident = `${detail}. ${reaction}. I'm skipping the boring small talk — tell me the story behind it.`;
+  const confident =
+    `${detail}. ${reaction}. I'm skipping the boring small talk — tell me the story behind it.`;
 
-  const casual = `${detail} — ${reaction}. What's the story there?`;
+  const casual =
+    `${detail} — ${reaction}. What's the story there?`;
 
   const messages = [
     {
@@ -339,16 +425,23 @@ function buildMessage() {
 
   output.innerHTML = `
     <div style="margin-top:16px;">
+
       <h3>Your Messages</h3>
+
       <p class="muted">
         Pick the one that sounds most like you.
       </p>
 
       ${messages.map(item => `
         <article class="card featured">
-          <strong>${item.style}</strong>
 
-          <p>${esc(item.message)}</p>
+          <strong>
+            ${item.style}
+          </strong>
+
+          <p>
+            ${esc(item.message)}
+          </p>
 
           <div>
             <button
@@ -362,20 +455,27 @@ function buildMessage() {
               ☆ Save
             </button>
           </div>
+
         </article>
       `).join("")}
+
     </div>
   `;
 }
 
 function cleanSentence(text) {
-  let cleaned = String(text).trim();
+  let cleaned =
+    String(text).trim();
 
-  cleaned = cleaned.replace(/[.!?]+$/, "");
+  cleaned =
+    cleaned.replace(/[.!?]+$/, "");
 
   if (!cleaned) return "";
 
-  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+  return (
+    cleaned.charAt(0).toUpperCase() +
+    cleaned.slice(1)
+  );
 }
 
 function saveBuiltMessage(message, button) {
@@ -388,18 +488,23 @@ function saveBuiltMessage(message, button) {
     );
 
     button.textContent = "★ Saved";
+
     toast("Message saved");
   } else {
     button.textContent = "★ Saved";
+
     toast("Already saved");
   }
 }
 
 function toast(text) {
-  const toastBox = document.querySelector("#toast");
+  const toastBox =
+    document.querySelector("#toast");
+
   if (!toastBox) return;
 
   toastBox.textContent = text;
+
   toastBox.classList.add("show");
 
   setTimeout(() => {
@@ -407,14 +512,127 @@ function toast(text) {
   }, 1400);
 }
 
-/* START APP */
+/* =========================================
+   INSTALL MATCHED WHAT NOW
+========================================= */
+
+let deferredInstallPrompt = null;
+
+window.addEventListener(
+  "beforeinstallprompt",
+  event => {
+
+    event.preventDefault();
+
+    deferredInstallPrompt = event;
+
+    showInstallButton();
+  }
+);
+
+function showInstallButton() {
+  const installButton =
+    document.querySelector("#installApp");
+
+  if (installButton) {
+    installButton.style.display = "inline-block";
+  }
+}
+
+async function installApp() {
+  if (deferredInstallPrompt) {
+
+    deferredInstallPrompt.prompt();
+
+    try {
+      await deferredInstallPrompt.userChoice;
+    } catch (error) {
+      console.log(
+        "Install prompt closed",
+        error
+      );
+    }
+
+    deferredInstallPrompt = null;
+
+    return;
+  }
+
+  const isIOS =
+    /iphone|ipad|ipod/i.test(
+      navigator.userAgent
+    );
+
+  if (isIOS) {
+    alert(
+      "To install Matched What Now on iPhone:\n\n" +
+      "1. Open this page in Safari.\n" +
+      "2. Tap the Share button.\n" +
+      "3. Tap Add to Home Screen.\n" +
+      "4. Tap Add."
+    );
+
+    return;
+  }
+
+  alert(
+    "If the install window does not appear, open your browser menu and choose Install app or Add to Home screen."
+  );
+}
+
+window.addEventListener(
+  "appinstalled",
+  () => {
+
+    deferredInstallPrompt = null;
+
+    const installButton =
+      document.querySelector("#installApp");
+
+    if (installButton) {
+      installButton.style.display = "none";
+    }
+
+    toast(
+      "Matched What Now installed!"
+    );
+  }
+);
+
+/* -----------------------------
+   SERVICE WORKER
+----------------------------- */
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener(
+    "load",
+    () => {
+
+      navigator.serviceWorker
+        .register("./sw.js")
+        .catch(error => {
+          console.log(
+            "Service worker registration failed:",
+            error
+          );
+        });
+
+    }
+  );
+}
+
+/* -----------------------------
+   START APP
+----------------------------- */
 
 renderCats();
 
-const initialTitle = document.querySelector("#title");
+const initialTitle =
+  document.querySelector("#title");
 
 if (initialTitle) {
-  initialTitle.textContent = labels[current];
+  initialTitle.textContent =
+    labels[current];
 }
 
 render(DATA[current]);
