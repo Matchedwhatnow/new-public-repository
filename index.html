@@ -30,6 +30,7 @@
   <main>
 
     <section class="hero">
+
       <h1>Stop sending boring "hey" messages.</h1>
 
       <p>
@@ -37,16 +38,41 @@
       </p>
 
       <div class="actions">
+
         <button onclick="randomMsg()">
-          💬 Give me a message
+          🎲 Give me a message
         </button>
 
-        <button class="ghost" onclick="showFavs()">
+        <button
+          class="ghost"
+          onclick="showFavs()">
           ❤️ Saved
         </button>
-      </div>
-    </section>
 
+      </div>
+
+      <div
+        class="actions"
+        style="margin-top:14px;"
+      >
+
+        <button
+          id="installApp"
+          onclick="installApp()"
+        >
+          📱 INSTALL MATCHED WHAT NOW
+        </button>
+
+      </div>
+
+      <p
+        class="muted"
+        style="margin-top:8px;"
+      >
+        Install the app on your phone for quick access.
+      </p>
+
+    </section>
 
     <input
       id="search"
@@ -55,14 +81,11 @@
       oninput="searchMsgs(this.value)"
     >
 
-
     <div id="cats" class="chips"></div>
-
 
     <h2 id="title"></h2>
 
     <section id="cards"></section>
-
 
     <section class="builder">
 
@@ -90,7 +113,6 @@
 
     </section>
 
-
     <section class="rules">
 
       <h2>Golden Rules</h2>
@@ -104,8 +126,8 @@
 
   </main>
 
-
   <nav>
+
     <button onclick="pick('funny')">
       Messages
     </button>
@@ -117,11 +139,10 @@
     <button onclick="showFavs()">
       Saved
     </button>
+
   </nav>
 
-
   <div id="toast"></div>
-
 
   <script src="app.js"></script>
 
