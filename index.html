@@ -19,6 +19,75 @@
 
 <body>
 
+  <!-- LICENCE ACTIVATION SCREEN -->
+<div id="licenceScreen" style="
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:#10111b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+">
+  <div style="
+    width:100%;
+    max-width:420px;
+    background:#191a27;
+    border:1px solid #ff3b81;
+    border-radius:18px;
+    padding:28px;
+    text-align:center;
+  ">
+    <h1>Matched: What Now?</h1>
+
+    <h2>Activate Your App</h2>
+
+    <p>
+      Enter the licence key you received after purchasing the app.
+    </p>
+
+    <input
+      id="licenceKey"
+      type="text"
+      placeholder="Enter your licence key"
+      autocomplete="off"
+      style="
+        width:100%;
+        box-sizing:border-box;
+        padding:14px;
+        margin:15px 0;
+        border-radius:10px;
+        border:1px solid #555;
+        font-size:16px;
+      "
+    >
+
+    <button
+      type="button"
+      onclick="activateLicence()"
+      style="
+        width:100%;
+        padding:14px;
+        border:0;
+        border-radius:10px;
+        background:#ff3b81;
+        color:white;
+        font-size:16px;
+        font-weight:bold;
+        cursor:pointer;
+      "
+    >
+      Activate App
+    </button>
+
+    <p style="font-size:13px; opacity:.7; margin-top:16px;">
+      Your licence key only needs to be activated once on this device.
+    </p>
+  </div>
+</div>
+
+
   <header>
     <div class="brand">
       <span>MATCHED:</span> WHAT NOW?
