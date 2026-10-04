@@ -730,6 +730,89 @@ if ("serviceWorker" in navigator) {
 
 renderCats();
 
+/* -----------------------------------------
+   LICENCE CHECK
+----------------------------------------- */
+
+const LICENCE_WORKER_URL =
+  "https://matched-what-now-licence.whathappensnow777.workers.dev/";
+
+async function checkLicence(licenceKey) {
+  const key = String(licenceKey || "").trim();
+
+  if (!key) {
+    return {
+      valid: false,
+      message: "Please enter your licence key."
+    };
+  }
+
+  try {
+    const response = await fetch(LICENCE_WORKER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        license_key: key
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.valid === true) {
+      localStorage.setItem("mwn_licence_key", key);
+      localStorage.setItem("mwn_licence_valid", "true");
+
+      return {
+        valid: true,
+        message: data.message || "Licence accepted!"
+      };
+    }
+
+    localStorage.removeItem("mwn_licence_valid");
+
+    return {
+      valid: false,
+      message: data.message || "That licence key is not valid."
+    };
+
+  } catch (error) {
+    console.error("Licence check failed:", error);
+
+    return {
+      valid: false,
+      message: "We couldn't check your licence. Please check your internet connection and try again."
+    };
+  }
+}
+
+async function activateLicence() {
+  const input = document.querySelector("#licenceKey");
+
+  if (!input) {
+    console.error("Licence input not found.");
+    return;
+  }
+
+  const result = await checkLicence(input.value);
+
+  if (result.valid) {
+    toast("Licence accepted!");
+
+    const licenceScreen =
+      document.querySelector("#licenceScreen");
+
+    if (licenceScreen) {
+      licenceScreen.style.display = "none";
+    }
+
+    return;
+  }
+
+  toast(result.message);
+}
+
 const initialTitle =
   document.querySelector("#title");
 
