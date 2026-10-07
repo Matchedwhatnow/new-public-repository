@@ -811,6 +811,7 @@ async function activateLicence() {
   }
 
   toast(result.message);
+  alert(result.message || "Licence key not recognised. Please check your key and try again.");
 }
 
 const initialTitle =
