@@ -830,23 +830,3 @@ if (isAppInstalled()) {
 } else {
   showInstallButton();
 }
-
-async function checkSavedLicenceOnStart() {
-  const screen = document.querySelector("#licenceScreen");
-  if (!screen) return;
-
-  const key = localStorage.getItem("mwn_licence_key");
-
-  // Keep the activation screen visible until verified.
-  screen.style.display = "flex";
-
-  if (!key) return;
-
-  const result = await checkLicence(key);
-
-  if (result.valid === true) {
-    screen.style.display = "none";
-  }
-}
-
-checkSavedLicenceOnStart();
